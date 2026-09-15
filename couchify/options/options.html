@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Couchify Settings</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      background: #12121a;
+      color: #e2e2ef;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 60px 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #a78bfa, #e879a8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .description {
+      color: #6b6b80;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    .description code {
+      background: #252538;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #a78bfa;
+    }
+
+    .card {
+      background: #1c1c2b;
+      border: 1px solid #2a2a3d;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #9898b0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #e2e2ef;
+      background: #252538;
+      border: 1px solid #35354d;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]::placeholder { color: #4e4e66; }
+    input[type="text"]:hover { border-color: #a78bfa; }
+    input[type="text"]:focus { border-color: #a78bfa; box-shadow: 0 0 0 2px rgba(167,139,250,0.15); }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      padding: 10px 24px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: linear-gradient(135deg, #8b5cf6, #a855f7);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(139,92,246,0.3);
+    }
+    button:hover {
+      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      box-shadow: 0 4px 20px rgba(139,92,246,0.45);
+      transform: translateY(-1px);
+    }
+    button:active { transform: translateY(0); }
+
+    #saved {
+      font-size: 12px;
+      color: #34d399;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    #saved.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ Settings</h1>
+    <p class="description">
+      Real-time broker URL. The default uses the free, global public broker with zero setup required. Change this only if you want to use a private broker.
+    </p>
+    <div class="card">
+      <label for="relayUrl">Relay URL</label>
+      <input id="relayUrl" type="text" placeholder="wss://…">
+      <div class="actions">
+        <button id="save">Save</button>
+        <span id="saved">✓ Saved</span>
+      </div>
+    </div>
+  </div>
+  <script src="options.js"></script>
+</body>
+</html>

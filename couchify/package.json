@@ -1,0 +1,19 @@
+{
+  "name": "couchify-ext",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "watch": "node build.mjs --watch",
+    "test": "node test/e2e-pw.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  },
+  "dependencies": {
+    "mqtt": "^5.15.2",
+    "peerjs": "^1.5.5",
+    "ws": "^8.21.3"
+  }
+}

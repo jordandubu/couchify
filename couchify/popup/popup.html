@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #09090b;
+      --surface: #141417;
+      --surface-hover: #1f1f23;
+      --border: #27272a;
+      --border-focus: #3f3f46;
+      --text: #fafafa;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent-bg: #f4f4f5;
+      --accent-text: #09090b;
+      --danger: #f87171;
+      --danger-bg: rgba(248, 113, 113, 0.08);
+      --danger-border: rgba(248, 113, 113, 0.2);
+      --success: #34d399;
+    }
+
+    body {
+      width: 280px;
+      padding: 14px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      -webkit-font-smoothing: antialiased;
+      user-select: none;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: -0.2px;
+    }
+    .brand-icon {
+      width: 15px;
+      height: 15px;
+      opacity: 0.9;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-dim);
+    }
+    .status-dot.connected {
+      background: var(--success);
+    }
+    .status-dot.disconnected {
+      background: var(--danger);
+    }
+
+    /* Segmented Control (Tabs) */
+    .tabs {
+      display: flex;
+      background: #111114;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px;
+      margin-bottom: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 6px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+    }
+    .tab-btn:hover {
+      color: var(--text);
+    }
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* Form controls */
+    .form-group {
+      margin-bottom: 10px;
+    }
+    .label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+    select, input[type="text"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 12px;
+      font-family: inherit;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.15s, background-color 0.15s;
+    }
+    select {
+      appearance: none;
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      cursor: pointer;
+    }
+    select:focus, input[type="text"]:focus {
+      border-color: var(--border-focus);
+    }
+    input[type="text"]::placeholder {
+      color: var(--text-dim);
+    }
+
+    .code-input {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace !important;
+      font-size: 13px !important;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background 0.15s, border-color 0.15s, opacity 0.15s, transform 0.05s;
+      outline: none;
+    }
+    .btn:active:not(:disabled) {
+      transform: scale(0.985);
+    }
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-primary {
+      background: var(--accent-bg);
+      color: var(--accent-text);
+      border: 1px solid var(--accent-bg);
+    }
+    .btn-primary:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--surface-hover);
+      border-color: var(--border-focus);
+    }
+    .btn-danger {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+      margin-top: 10px;
+    }
+    .btn-danger:hover:not(:disabled) {
+      background: var(--danger-bg);
+    }
+
+    /* Room Active View */
+    .room-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 6px;
+    }
+    .room-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .room-code-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #09090b;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 10px;
+    }
+    .room-code-text {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--text);
+    }
+    .btn-copy {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .btn-copy:hover {
+      color: var(--text);
+      border-color: var(--border-focus);
+    }
+    .btn-copy.copied {
+      color: var(--success);
+      border-color: rgba(52, 211, 153, 0.4);
+    }
+
+    .room-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #09090b;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .tag.online {
+      color: var(--success);
+      border-color: rgba(52, 211, 153, 0.25);
+    }
+
+    /* Banners */
+    .banner {
+      display: none;
+      font-size: 11px;
+      padding: 7px 9px;
+      border-radius: 4px;
+      margin-top: 8px;
+      line-height: 1.35;
+    }
+    .banner.yellow {
+      display: block;
+      background: rgba(234, 179, 8, 0.08);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.2);
+    }
+    .banner.red {
+      display: block;
+      background: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="header">
+    <div class="brand">
+      <img class="brand-icon" src="../icons/icon-32.png" alt="">
+      <span>Couchify</span>
+    </div>
+    <div class="status-badge">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Connecting</span>
+    </div>
+  </div>
+
+  <!-- Idle View (Create or Join) -->
+  <div id="idleView">
+    <div class="tabs">
+      <button class="tab-btn active" id="tabCreate">Create</button>
+      <button class="tab-btn" id="tabJoin">Join</button>
+    </div>
+
+    <!-- Create Section -->
+    <div id="panelCreate">
+      <div class="form-group">
+        <label class="label" for="policy">Control Mode</label>
+        <select id="policy">
+          <option value="leader" selected>Leader controls only</option>
+          <option value="both">All members control</option>
+        </select>
+      </div>
+      <button id="create" class="btn btn-primary">Create Room</button>
+    </div>
+
+    <!-- Join Section -->
+    <div id="panelJoin" style="display: none;">
+      <div class="form-group">
+        <label class="label" for="joinCode">Room Code</label>
+        <input id="joinCode" class="code-input" type="text" placeholder="e.g. ABC123" maxlength="6">
+      </div>
+      <button id="join" class="btn btn-primary">Join Room</button>
+    </div>
+  </div>
+
+  <!-- Room Active View -->
+  <div id="roomView" style="display: none;">
+    <div class="room-panel">
+      <div class="room-header">
+        <span>ACTIVE ROOM</span>
+        <span id="roomStatus">Synced</span>
+      </div>
+      <div class="room-code-row">
+        <span class="room-code-text" id="code">------</span>
+        <button class="btn-copy" id="copyBtn">Copy</button>
+      </div>
+      <div class="room-meta-row">
+        <span class="tag online" id="peerCount">1 online</span>
+        <span class="tag" id="policyBadge">Leader only</span>
+      </div>
+    </div>
+    <button id="leave" class="btn btn-danger">Leave Room</button>
+  </div>
+
+  <!-- Mismatch alerts -->
+  <div class="banner" id="bannerRegion"></div>
+  <div class="banner" id="bannerTitle"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "couchify-relay",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "relay.mjs",
+  "scripts": { "start": "node relay.mjs" },
+  "dependencies": { "ws": "^8.18.0" }
+}
