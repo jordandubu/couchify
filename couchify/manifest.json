@@ -3,8 +3,13 @@
   "name": "Couchify",
   "version": "0.1.0",
   "description": "Watch Netflix, HBO Max, YouTube and more in sync with friends across browsers. Rooms, drift correction, region-mismatch alerts.",
-  "permissions": ["storage", "tabs"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -25,7 +30,10 @@
     "open_in_tab": true
   },
   "background": {
-    "scripts": ["lib/compat.js", "background/worker.js"]
+    "scripts": [
+      "lib/compat.js",
+      "background/worker.js"
+    ]
   },
   "content_scripts": [
     {
@@ -39,7 +47,9 @@
         "*://localhost/*",
         "file:///*"
       ],
-      "js": ["content/video.js"],
+      "js": [
+        "content/video.js"
+      ],
       "run_at": "document_idle",
       "all_frames": false
     }
@@ -49,11 +59,14 @@
       "id": "couchify@dubujordan.fr",
       "strict_min_version": "140.0",
       "data_collection_permissions": {
-        "required": ["none"]
+        "required": [
+          "none"
+        ]
       }
     },
     "gecko_android": {
       "strict_min_version": "142.0"
     }
-  }
+  },
+  "license": "MIT"
 }
