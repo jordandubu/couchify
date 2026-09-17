@@ -252,7 +252,13 @@ function showSyncToast(title, text) {
     `;
     document.body.appendChild(toast);
   }
-  toast.innerHTML = `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399"></span><span>${title ? title + ": " : ""}${text}</span>`;
+  while (toast.firstChild) toast.firstChild.remove();
+  const dot = document.createElement("span");
+  dot.style.cssText = "display:inline-block;width:6px;height:6px;border-radius:50%;background:#34d399";
+  toast.appendChild(dot);
+  const label = document.createElement("span");
+  label.textContent = title ? title + ": " + text : text;
+  toast.appendChild(label);
   toast.style.opacity = "1";
   toast.style.transform = "translateY(0)";
   if (toastTimeout) clearTimeout(toastTimeout);

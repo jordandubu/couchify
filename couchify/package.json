@@ -4,12 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node build.mjs",
+    "build": "node build.mjs && web-ext build --source-dir dist --artifacts-dir dist-zip --overwrite-dest",
     "watch": "node build.mjs --watch",
-    "test": "node test/e2e-pw.mjs"
+    "test": "node test/e2e-pw.mjs",
+    "lint": "web-ext lint --source-dir dist"
   },
   "devDependencies": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "web-ext": "^10.6.0"
   },
   "dependencies": {
     "mqtt": "^5.15.2",

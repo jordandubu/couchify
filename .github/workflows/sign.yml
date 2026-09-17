@@ -1,0 +1,31 @@
+name: Sign & Submit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - couchify/**
+      - couchify/package.json
+  workflow_dispatch:
+
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: couchify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: couchify/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npx web-ext lint --source-dir dist
+      - name: Sign & submit to AMO (listed)
+        run: npx web-ext sign --source-dir dist --channel listed --api-key "$AMO_API_KEY" --api-secret "$AMO_API_SECRET"
+        env:
+          AMO_API_KEY: ${{ secrets.AMO_API_KEY }}
+          AMO_API_SECRET: ${{ secrets.AMO_API_SECRET }}
