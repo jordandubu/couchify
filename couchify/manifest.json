@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Couchify",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Watch Netflix, HBO Max, YouTube and more in sync with friends across browsers. Rooms, drift correction, region-mismatch alerts.",
   "permissions": [
     "storage",

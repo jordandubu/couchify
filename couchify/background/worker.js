@@ -62,6 +62,11 @@ class RoomSession {
         clientId: `cf_${this.peerId}`,
         keepalive: 30,
         reconnectPeriod: 2500,
+        // mqtt.js "auto" timers create a blob: Worker for keepalive pings,
+        // which Firefox MV3 CSP (script-src 'self') blocks: the throw happens
+        // inside _onConnect, so the "connect" event never fires and the popup
+        // stays on "Connecting" forever. Native setInterval is fine here.
+        timerVariant: "native",
       });
     } catch (err) {
       console.error(`[couchify:${this.contextId}] mqtt.connect failed:`, err);
