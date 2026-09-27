@@ -2,7 +2,7 @@ name: Sign & Submit
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
     paths:
       - couchify/**
       - couchify/package.json
