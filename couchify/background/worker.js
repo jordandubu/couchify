@@ -2,7 +2,7 @@
 // dual-session support (normal vs private window isolation),
 // presence & live peer count tracking, and video synchronization.
 
-import { DEFAULT_RELAY_URL, decode, encode, makePeerId, makeRoomCode } from "../lib/protocol.js";
+import { DEFAULT_RELAY_URL, decryptRoomPayload, encode, encryptRoomPayload, makePeerId, makeRoomCode } from "../lib/protocol.js";
 import mqtt from "mqtt";
 
 class RoomSession {
@@ -102,9 +102,12 @@ class RoomSession {
         } catch {}
         return;
       }
-      const wire = decode(raw);
-      if (!wire) return;
-      this.handleWire(wire);
+      // Room code is the last path segment; decrypt its payload before dispatch.
+      const code = topic.split("/").pop();
+      decryptRoomPayload(code, raw).then((wire) => {
+        if (!wire) return;
+        this.handleWire(wire);
+      }).catch(() => {});
     });
   }
 
@@ -172,14 +175,15 @@ class RoomSession {
     if (changed) this.notifyPeerCount();
   }
 
-  sendRaw(raw, retain = false) {
+  async sendRaw(raw, retain = false) {
     if (this.room && this.client && this.clientConnected) {
-      this.client.publish(this.topic(this.room.code), raw, { qos: 0, retain });
+      // Encrypt with the room's code-derived key; broker stores only ciphertext.
+      this.client.publish(this.topic(this.room.code), await encryptRoomPayload(this.room.code, raw), { qos: 0, retain });
     }
   }
 
-  flushPending() {
-    while (this.pendingEmits.length) this.sendRaw(this.pendingEmits.shift());
+  async flushPending() {
+    while (this.pendingEmits.length) await this.sendRaw(this.pendingEmits.shift());
   }
 
   handleWire(msg) {

@@ -48,3 +48,60 @@ export function decode(raw) {
     return null;
   }
 }
+
+// --- Room payload encryption -------------------------------------------------
+// The public broker sees topic names (couchify/v1/room/<code>) but room
+// payloads are AES-GCM encrypted with a key derived from the room code. Anyone
+// wildcard-subscribing to the broker reads only opaque ciphertext; knowing a
+// room code is exactly the "know the room" credential, so a code-derived key
+// adds no key-distribution problem. Fixed "pepper" binds ciphertext to this app.
+const ENC_PEPPER = "couchify/v1";
+const roomKeyCache = new Map(); // code -> Promise<CryptoKey>
+
+function roomKey(code) {
+  let p = roomKeyCache.get(code);
+  if (!p) {
+    const enc = new TextEncoder();
+    p = crypto.subtle.importKey("raw", enc.encode(code), "PBKDF2", false, ["deriveKey"]).then((base) =>
+      crypto.subtle.deriveKey(
+        { name: "PBKDF2", salt: enc.encode(ENC_PEPPER), iterations: 100_000, hash: "SHA-256" },
+        base,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["encrypt", "decrypt"],
+      ),
+    );
+    roomKeyCache.set(code, p);
+  }
+  return p;
+}
+
+const b64 = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+
+/** Encrypt a plaintext (encoded) protocol message for a room. Resolves to the wire string. */
+export async function encryptRoomPayload(code, plaintext) {
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    await roomKey(code),
+    new TextEncoder().encode(plaintext),
+  );
+  return JSON.stringify({ v: PROTOCOL_VERSION, e: 1, iv: b64(iv), d: b64(ct) });
+}
+
+/** Decrypt a wire string for a room. Resolves to the message object, or null. */
+export async function decryptRoomPayload(code, wire) {
+  try {
+    const env = JSON.parse(wire);
+    if (!env || env.e !== 1 || typeof env.iv !== "string" || typeof env.d !== "string") return null;
+    const pt = await crypto.subtle.decrypt(
+      { name: "AES-GCM", iv: unb64(env.iv) },
+      await roomKey(code),
+      unb64(env.d),
+    );
+    return decode(new TextDecoder().decode(pt));
+  } catch {
+    return null;
+  }
+}
